@@ -1,0 +1,46 @@
+apiVersion: "kubeflow.org/v1"
+kind: "TFJob"
+metadata:
+  name: newmyjobs
+spec:
+  tfReplicaSpecs:
+    PS:
+      replicas: 1
+      restartPolicy: Never
+      template:
+        metadata:
+          annotations:
+             kubernetes.io/mykey: newmyjobs
+          labels:
+             schedulingStrategy: tfjob
+        spec:
+          schedulerName: my-scheduler
+          containers:
+            - name: tensorflow
+              image: asifraza/tf-dist-mnist-testing:latest # asifraza/tensorflow-testing:latest
+              resources:
+                requests:
+                  cpu: 2
+                  memory: 1024Mi
+
+    Worker:
+      replicas: 2 
+      restartPolicy: Never
+      template:
+        metadata:
+          annotations:
+             kubernetes.io/mykey: newmyjobs
+          labels:
+             schedulingStrategy: tfjob
+        spec:
+          schedulerName: my-scheduler
+          containers:
+            - name: tensorflow
+              image: asifraza/tf-dist-mnist-testing:latest  #asifraza/tensorflow-testing:latest
+              resources:
+                requests:
+                  cpu: 3
+                  memory: 1024Mi
+
+
+
