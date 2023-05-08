@@ -1,0 +1,60 @@
+apiVersion: kubeflow.org/v1
+kind: TFJob
+metadata:
+  name: tensorflow
+spec:
+  tfReplicaSpecs:
+    PS:
+      replicas: 1
+      restartPolicy: Never
+      template:
+        spec:
+          containers:
+          - name: tensorflow
+            image: dltkd03/notmnist43cpu
+            resources:
+              requests:
+                cpu: 2
+                memory: 2048Mi
+              limits:
+                cpu: 2
+                memory: 2048Mi
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values: &id001
+                    - 203.250.172.32
+                    - 203.250.172.31
+                    - 203.250.172.36
+                    - 203.250.172.28
+                    - 203.250.172.30
+                    - 203.250.172.29
+    Worker:
+      replicas: 6
+      restartPolicy: Never
+      template:
+        spec:
+          containers:
+          - name: tensorflow
+            image: dltkd03/notmnist43cpu
+            resources:
+              requests:
+                cpu: 2
+                memory: 2048Mi
+                nvidia.com/gpu: 0
+              limits:
+                cpu: 2
+                memory: 2048Mi
+                nvidia.com/gpu: 0
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values: *id001
